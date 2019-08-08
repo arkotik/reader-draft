@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reader</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="book.js"></script>
+</head>
+<body>
+<div class="main-wrapper">
+    <div class="text-wrapper">
+        <div class="text"><p></p></div>
+    </div>
+</div>
+<footer>
+    <script type="text/javascript">
+      const sections = bookDoc.firstElementChild.children;
+      // const titles = [...sections].map(section => section.querySelector('title').innerHTML);
+      const sec = sections[0];
+      replaceTitles(sec);
+      replaceEmptyLines(sec);
+      const textHolder = document.querySelector('.text');
+      const { width, height } = textHolder.getBoundingClientRect();
+      const INDENT_SIZE = 20;
+      const LINE_HEIGHT = 18;
+
+
+      const SIZES = calcSizes();
+
+      const abz = [...sec.querySelectorAll('p')].map(a => a.innerHTML);
+      const m = abz.map(txt => ({ txt, lines: calcAbzLines(txt) }));
+      console.log(m);
+      textHolder.innerHTML = sec.innerHTML;
+
+
+      function calcAbzLines(text = '') {
+        return Math.ceil((calcAbzLength(text) + INDENT_SIZE) / width);
+      }
+    </script>
+</footer>
+</body>
+</html>

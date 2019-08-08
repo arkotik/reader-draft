@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+section {
+    margin-bottom: 20px;
+}
+.main-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.text-wrapper {
+    border: 1px solid;
+    padding: 5px;
+}
+.text {
+    overflow: hidden;
+    width: 60vh;
+    height: calc(80vh - 2px);
+    line-height: 18px;
+    word-break: break-all;
+}
+.text p {
+    text-indent: 20px;
+    margin: 5px 0;
+}
