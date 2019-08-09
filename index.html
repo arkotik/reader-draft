@@ -15,6 +15,7 @@
 </div>
 <footer>
     <script type="text/javascript">
+      console.time('x');
       const sections = bookDoc.firstElementChild.children;
       // const titles = [...sections].map(section => section.querySelector('title').innerHTML);
       const sec = sections[0];
@@ -30,13 +31,9 @@
 
       const abz = [...sec.querySelectorAll('p')].map(a => a.innerHTML);
       const m = abz.map(txt => ({ txt, lines: calcAbzLines(txt) }));
+      console.timeEnd('x');
       console.log(m);
       textHolder.innerHTML = sec.innerHTML;
-
-
-      function calcAbzLines(text = '') {
-        return Math.ceil((calcAbzLength(text) + INDENT_SIZE) / width);
-      }
     </script>
 </footer>
 </body>
