@@ -21,9 +21,27 @@ section {
     width: 60vh;
     height: calc(80vh - 2px);
     line-height: 18px;
-    word-break: break-all;
+    /*word-break: break-all;*/
+    text-align: justify;
 }
 .text p {
     text-indent: 20px;
-    margin: 5px 0;
+    margin-bottom: 3px;
+}
+.text p.continuation {
+    text-indent: 0;
+}
+.section-title {
+    /*font-weight: 600;*/
+}
+.buttons {
+    position: absolute;
+    top: 20px;
+    width: 60vh;
+    display: flex;
+    justify-content: space-between;
+}
+.buttons button {
+    width: 50px;
+    cursor: pointer;
 }

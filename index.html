@@ -9,8 +9,13 @@
 </head>
 <body>
 <div class="main-wrapper">
+    <div class="buttons">
+        <button id="prev-page"><--</button>
+        <div class="pages-amount"></div>
+        <button id="next-page">--></button>
+    </div>
     <div class="text-wrapper">
-        <div class="text"><p></p></div>
+        <div class="text"></div>
     </div>
 </div>
 <footer>
@@ -30,10 +35,29 @@
       const SIZES = calcSizes();
 
       const abz = [...sec.querySelectorAll('p')].map(a => a.innerHTML);
-      const m = abz.map(txt => ({ txt, lines: calcAbzLines(txt) }));
+      // const m = abz.map(txt => ({ txt, lines: calcAbzLines(txt, width) }));
+      const pages = splitTextToPages(abz, { width, height, lineHeight: LINE_HEIGHT, interval: 3 });
       console.timeEnd('x');
-      console.log(m);
-      textHolder.innerHTML = sec.innerHTML;
+      console.log(pages);
+      let currentPage = 0;
+      const maxPage = pages.length - 1;
+      const prev = document.getElementById('prev-page');
+      const next = document.getElementById('next-page');
+      const pagesAmount = document.querySelector('.pages-amount');
+      const goToPage = (page) => {
+        renderPage(pages[page], textHolder);
+        prev.disabled = page === 0;
+        next.disabled = page === maxPage;
+        pagesAmount.innerText = `${currentPage + 1} / ${ maxPage + 1}`;
+      };
+      prev.onclick = () => {
+        currentPage > 0 && goToPage(--currentPage);
+      };
+      next.onclick = () => {
+        currentPage < maxPage && goToPage(++currentPage);
+      };
+      goToPage(currentPage);
+      // textHolder.innerHTML = sec.innerHTML;
     </script>
 </footer>
 </body>
