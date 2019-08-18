@@ -10,9 +10,11 @@
 <body>
 <div class="main-wrapper">
     <div class="buttons">
-        <button id="prev-page"><--</button>
+        <button id="prev-chapter" title="Prev chapter"><<</button>
+        <button id="prev-page" title="Prev page"><</button>
         <div class="pages-amount"></div>
-        <button id="next-page">--></button>
+        <button id="next-page" title="Next page">></button>
+        <button id="next-chapter" title="Next chapter">>></button>
     </div>
     <div class="text-wrapper">
         <div class="text"></div>
@@ -20,44 +22,87 @@
 </div>
 <footer>
     <script type="text/javascript">
-      console.time('x');
-      const sections = bookDoc.firstElementChild.children;
-      // const titles = [...sections].map(section => section.querySelector('title').innerHTML);
-      const sec = sections[0];
-      replaceTitles(sec);
-      replaceEmptyLines(sec);
       const textHolder = document.querySelector('.text');
+      const prevPage = document.getElementById('prev-page');
+      const nextPage = document.getElementById('next-page');
+      const prevChapter = document.getElementById('prev-chapter');
+      const nextChapter = document.getElementById('next-chapter');
+      const pagesAmount = document.querySelector('.pages-amount');
+
+      const sections = bookDoc.firstElementChild.children;
+      const chapters = [];
+
+      for (const section of sections) {
+        replaceTitles(section);
+        replaceEmptyLines(section);
+        const title = (section.querySelector('title') || {}).innerHTML;
+        const text = [...section.querySelectorAll('p')].map(a => a.innerHTML);
+        chapters.push({ text, title });
+      }
+
       const { width, height } = textHolder.getBoundingClientRect();
       const INDENT_SIZE = 20;
       const LINE_HEIGHT = 18;
-
-
+      const INTERVAL = 3;
       const SIZES = calcSizes();
+      const options = { width, height, lineHeight: LINE_HEIGHT, interval: INTERVAL };
 
-      const abz = [...sec.querySelectorAll('p')].map(a => a.innerHTML);
-      // const m = abz.map(txt => ({ txt, lines: calcAbzLines(txt, width) }));
-      const pages = splitTextToPages(abz, { width, height, lineHeight: LINE_HEIGHT, interval: 3 });
-      console.timeEnd('x');
-      console.log(pages);
+      let currentChapter = 0;
+      const maxChapter = chapters.length - 1;
+
+      chapters[currentChapter].pages = splitTextToPages(chapters[currentChapter].text, options);
+
       let currentPage = 0;
-      const maxPage = pages.length - 1;
-      const prev = document.getElementById('prev-page');
-      const next = document.getElementById('next-page');
-      const pagesAmount = document.querySelector('.pages-amount');
+      let maxPage = chapters[currentChapter].pages.length - 1;
+
+      const disable = () => {
+        prevChapter.disabled = currentChapter === 0;
+        nextChapter.disabled = currentChapter === maxChapter;
+        prevPage.disabled = currentChapter === 0 && currentPage === 0;
+        nextPage.disabled = currentChapter === maxChapter && currentPage === maxPage;
+      };
+
+      const changeChapter = (nextChapter) => {
+        if (nextChapter > 1 || nextChapter < maxChapter + 1) {
+          if (!chapters[nextChapter].pages) {
+            chapters[nextChapter].pages = splitTextToPages(chapters[nextChapter].text, options);
+          }
+          maxPage = chapters[nextChapter].pages.length - 1;
+          currentPage = 0;
+          currentChapter = nextChapter;
+        }
+        disable();
+      };
+
       const goToPage = (page) => {
-        renderPage(pages[page], textHolder);
-        prev.disabled = page === 0;
-        next.disabled = page === maxPage;
+        if (page < 0) {
+          changeChapter(currentChapter - 1);
+        } else if (page > maxPage) {
+          changeChapter(currentChapter + 1);
+        } else {
+          currentPage = page;
+        }
+        renderPage(chapters[currentChapter].pages[currentPage], textHolder);
         pagesAmount.innerText = `${currentPage + 1} / ${ maxPage + 1}`;
+        disable();
       };
-      prev.onclick = () => {
-        currentPage > 0 && goToPage(--currentPage);
+
+      prevPage.onclick = () => {
+        goToPage(currentPage - 1);
       };
-      next.onclick = () => {
-        currentPage < maxPage && goToPage(++currentPage);
+
+      nextPage.onclick = () => {
+        goToPage(currentPage + 1);
+      };
+
+      prevChapter.onclick = () => {
+        goToPage(-1);
+      };
+
+      nextChapter.onclick = () => {
+        goToPage(maxPage + 1);
       };
       goToPage(currentPage);
-      // textHolder.innerHTML = sec.innerHTML;
     </script>
 </footer>
 </body>
